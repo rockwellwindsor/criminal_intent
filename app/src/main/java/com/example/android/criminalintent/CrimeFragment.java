@@ -19,6 +19,7 @@ public class CrimeFragment extends Fragment {
     private EditText mTitleField;
     private Button mDateButton;
     private CheckBox mSolvedCheckBox;
+    private String mDate;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -48,8 +49,10 @@ public class CrimeFragment extends Fragment {
             }
         });
 
+        android.text.format.DateFormat df = new android.text.format.DateFormat();
+        mDate = (df.format("MM-dd-yyyy hh:mm:ss a", new java.util.Date())).toString();
         mDateButton = (Button)v.findViewById(R.id.crime_date);
-        mDateButton.setText(mCrime.getDate().toString());
+        mDateButton.setText(mDate);
         mDateButton.setEnabled(false);
 
         mSolvedCheckBox = (CheckBox)v.findViewById(R.id.crime_solved);
