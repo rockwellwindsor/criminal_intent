@@ -12,7 +12,8 @@ import java.util.UUID;
 
 public class CrimeLab {
     private static CrimeLab sCrimeLab;
-    private List<Crime> mCrimes;
+
+    private ArrayList<Crime> mCrimes;
 
     public static CrimeLab get(Context context) {
         if (sCrimeLab == null) {
@@ -31,7 +32,7 @@ public class CrimeLab {
         }
     }
 
-    public List<Crime> getCrimes(UUID id) {
+    public List<Crime> getCrimes() {
         return mCrimes;
     }
 
