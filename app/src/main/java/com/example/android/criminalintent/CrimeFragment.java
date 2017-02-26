@@ -32,13 +32,12 @@ public class CrimeFragment extends Fragment {
         fragment.setArguments(args);
         return fragment;
     }
-
+    
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         UUID crimeId = (UUID) getArguments().getSerializable(ARG_CRIME_ID);
-        mCrime = new Crime();
+        mCrime = CrimeLab.get(getActivity()).getCrime(crimeId);
     }
 
     @Override
