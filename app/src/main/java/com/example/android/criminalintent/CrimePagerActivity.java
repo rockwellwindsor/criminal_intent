@@ -1,5 +1,7 @@
 package com.example.android.criminalintent;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -8,6 +10,7 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by rockwellrice on 2/26/17.
@@ -15,13 +18,22 @@ import java.util.List;
 
 public class CrimePagerActivity extends FragmentActivity {
 
+    private static final String EXTRA_CRIME_ID = "com.example.android.criminalintent";
+
     private ViewPager mViewPager;
     private List<Crime> mCrimes;
+
+    public static Intent newIntent(Context packageContext, UUID crimeId) {
+        Intent intent = new Intent(packageContext, CrimePagerActivity.class);
+        return intent;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_crime_pager);
+
+        UUID crimeId = (UUID) getIntent().getSerializableExtra(EXTRA_CRIME_ID);
 
         mViewPager = (ViewPager) findViewById(R.id.activity_crime_pager_view_pager);
 
