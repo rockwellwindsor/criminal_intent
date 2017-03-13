@@ -1,5 +1,7 @@
 package com.example.android.criminalintent;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -14,6 +16,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 
+import java.util.Date;
 import java.util.UUID;
 
 public class CrimeFragment extends Fragment {
@@ -70,7 +73,8 @@ public class CrimeFragment extends Fragment {
         android.text.format.DateFormat df = new android.text.format.DateFormat();
         mDate = (df.format("MM-dd-yyyy hh:mm:ss a", new java.util.Date())).toString();
         mDateButton = (Button)v.findViewById(R.id.crime_date);
-        mDateButton.setText(mDate);
+//        mDateButton.setText(mDate);
+        updateDate();
         mDateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -91,5 +95,21 @@ public class CrimeFragment extends Fragment {
         });
         
         return v;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode != Activity.RESULT_OK) {
+            return;
+        }
+        if (requestCode == REQUEST_DATE) {
+            Date date = (Date) data.getSerializableExtra(DatePickerFragment.EXTRA_DATE);
+            mCrime.setDate(date);
+            updateDate();
+        }
+    }
+
+    private void updateDate() {
+        mDateButton.setText(mCrime.getDate().toString());
     }
 }
