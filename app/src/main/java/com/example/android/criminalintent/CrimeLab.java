@@ -11,8 +11,8 @@ import java.util.UUID;
  */
 
 public class CrimeLab {
-    private static CrimeLab sCrimeLab;
 
+    private static CrimeLab sCrimeLab;
     private ArrayList<Crime> mCrimes;
 
     public static CrimeLab get(Context context) {
@@ -30,6 +30,10 @@ public class CrimeLab {
             crime.setSolved(i % 2 == 0);
             mCrimes.add(crime);
         }
+    }
+
+    public void addCrime(Crime c) {
+        mCrimes.add(c);
     }
 
     public List<Crime> getCrimes() {
