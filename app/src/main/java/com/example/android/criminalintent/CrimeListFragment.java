@@ -26,6 +26,7 @@ public class CrimeListFragment extends Fragment {
     private RecyclerView mCrimeRecyclerView;
     private CrimeAdapter mAdapter;
     private boolean mSubtitleVisible;
+    private static final String SAVED_SUBTITLE_VISIBLE = "subtitle";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -44,6 +45,11 @@ public class CrimeListFragment extends Fragment {
                 .findViewById(R.id.crime_recycler_view);
         mCrimeRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
+        // Check if savedInstanceState is empty or not during onCreateView
+        if (savedInstanceState != null) {
+            mSubtitleVisible = savedInstanceState.getBoolean(SAVED_SUBTITLE_VISIBLE);
+        }
+
         updateUI();
 
         return view;
@@ -59,6 +65,9 @@ public class CrimeListFragment extends Fragment {
         } else {
             mAdapter.notifyDataSetChanged();
         }
+
+        // Update the counter when returning to crime activity
+        updateSubtitle();
     }
 
     private class CrimeHolder extends RecyclerView.ViewHolder
@@ -170,5 +179,11 @@ public class CrimeListFragment extends Fragment {
 
         AppCompatActivity activity = (AppCompatActivity) getActivity();
         activity.getSupportActionBar().setSubtitle(subtitle);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(SAVED_SUBTITLE_VISIBLE, mSubtitleVisible);
     }
 }
