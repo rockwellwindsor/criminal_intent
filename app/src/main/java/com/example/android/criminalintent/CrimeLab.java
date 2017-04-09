@@ -1,9 +1,11 @@
 package com.example.android.criminalintent;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.example.android.criminalintent.database.CrimeBaseHelper;
+import com.example.android.criminalintent.database.CrimeDbSchema;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,11 +32,11 @@ public class CrimeLab {
     private CrimeLab(Context context) {
         mContext = context.getApplicationContext();
         mDatabase = new CrimeBaseHelper(mContext).getWritableDatabase();
-
     }
 
     public void addCrime(Crime c) {
-
+        ContentValues values = getContentValues(c);
+        mDatabase.insert(CrimeDbSchema.CrimeTable.NAME, null, values);
     }
 
     public List<Crime> getCrimes() {
@@ -42,7 +44,26 @@ public class CrimeLab {
     }
 
     public Crime getCrime(UUID id) {
-
         return null;
+    }
+
+    public void updateCrime(Crime crime) {
+        String uuidString = crime.getId().toString();
+        ContentValues values = getContentValues(crime);
+
+        mDatabase.update(CrimeDbSchema.CrimeTable.NAME, // Pss in table name to update
+                values, // The content values you want to assign
+                CrimeDbSchema.CrimeTable.Cols.UUID + " = ?", // Build a 'where' clause to determine which rows get updated
+                new String[] { uuidString}); // Specify values for the arguments in the 'where' clause
+    }
+
+    // This method creates content values for the columns of the crime table
+    private static ContentValues getContentValues(Crime crime) {
+        ContentValues values = new ContentValues();
+        values.put(CrimeDbSchema.CrimeTable.Cols.UUID, crime.getId().toString());
+        values.put(CrimeDbSchema.CrimeTable.Cols.TITLE, crime.getTitle());
+        values.put(CrimeDbSchema.CrimeTable.Cols.DATE, crime.getDate().getTime());
+        values.put(CrimeDbSchema.CrimeTable.Cols.SOLVED, crime.isSolved() ? 1 : 0 );
+        return values;
     }
 }
