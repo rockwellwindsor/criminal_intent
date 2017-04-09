@@ -2,9 +2,11 @@ package com.example.android.criminalintent;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.example.android.criminalintent.database.CrimeBaseHelper;
+import com.example.android.criminalintent.database.CrimeCursorWrapper;
 import com.example.android.criminalintent.database.CrimeDbSchema;
 
 import java.util.ArrayList;
@@ -40,11 +42,36 @@ public class CrimeLab {
     }
 
     public List<Crime> getCrimes() {
-        return new ArrayList<>();
+        List<Crime> crimes = new ArrayList<>();
+        CrimeCursorWrapper cursor = queryCrimes(null, null);
+        try {
+            cursor.moveToFirst();
+            while(!cursor.isAfterLast()) {
+                crimes.add(cursor.getCrime());
+                cursor.moveToNext();
+            }
+        } finally {
+            cursor.close(); // If you do not close the cursor eventually you will run out of open files and crash the app
+        }
+        return crimes;
     }
 
     public Crime getCrime(UUID id) {
-        return null;
+
+        CrimeCursorWrapper cursor = queryCrimes(
+                CrimeDbSchema.CrimeTable.Cols.UUID + " = ? ",
+                new String[] { id.toString() }
+        );
+
+        try {
+            if (cursor.getCount() == 0) {
+                return null;
+            }
+            cursor.moveToFirst();
+            return cursor.getCrime();
+        } finally {
+            cursor.close();
+        }
     }
 
     public void updateCrime(Crime crime) {
@@ -65,5 +92,19 @@ public class CrimeLab {
         values.put(CrimeDbSchema.CrimeTable.Cols.DATE, crime.getDate().getTime());
         values.put(CrimeDbSchema.CrimeTable.Cols.SOLVED, crime.isSolved() ? 1 : 0 );
         return values;
+    }
+
+    // Query for crimes
+    private CrimeCursorWrapper queryCrimes(String whereClause, String[] whereArgs) {
+        Cursor cursor = mDatabase.query(
+                CrimeDbSchema.CrimeTable.NAME,
+                null,
+                whereClause,
+                whereArgs,
+                null,
+                null,
+                null
+        );
+        return new CrimeCursorWrapper(cursor);
     }
 }
