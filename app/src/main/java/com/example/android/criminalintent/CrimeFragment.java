@@ -2,6 +2,7 @@ package com.example.android.criminalintent;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -29,7 +30,9 @@ public class CrimeFragment extends Fragment {
     private EditText mTitleField;
     private Button mDateButton;
     private CheckBox mSolvedCheckBox;
+    private Button mCrimeDeleteButton;
     private String mDate;
+    private SQLiteDatabase mDatabase;
 
     public static CrimeFragment newInstance(UUID crimeId) {
         Bundle args = new Bundle();
@@ -58,6 +61,8 @@ public class CrimeFragment extends Fragment {
 
         mTitleField = (EditText) v.findViewById(R.id.crime_title);
         mTitleField.setText(mCrime.getTitle());
+        mCrimeDeleteButton = (Button) v.findViewById(R.id.delete_crime_button);
+
         mTitleField.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -78,7 +83,6 @@ public class CrimeFragment extends Fragment {
         android.text.format.DateFormat df = new android.text.format.DateFormat();
         mDate = (df.format("MM-dd-yyyy hh:mm:ss a", new java.util.Date())).toString();
         mDateButton = (Button)v.findViewById(R.id.crime_date);
-//        mDateButton.setText(mDate);
         updateDate();
         mDateButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -87,6 +91,14 @@ public class CrimeFragment extends Fragment {
                 DatePickerFragment dialog = DatePickerFragment.newInstance(mCrime.getDate());
                 dialog.setTargetFragment(CrimeFragment.this, REQUEST_DATE);
                 dialog.show(manager, DIALOG_DATE);
+            }
+        });
+
+        mCrimeDeleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentManager manager = getFragmentManager();
+                removeCrimeMethod(mCrime);
             }
         });
 
@@ -112,6 +124,11 @@ public class CrimeFragment extends Fragment {
             mCrime.setDate(date);
             updateDate();
         }
+    }
+
+    public void removeCrimeMethod(Crime crime) {
+        CrimeLab.get(getActivity()).deleteCrime(crime);
+        //        Toast.makeText(getActivity(), "Delete button pressed : " + crime.getTitle(), Toast.LENGTH_SHORT).show();
     }
 
     private void updateDate() {
