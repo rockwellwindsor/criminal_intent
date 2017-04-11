@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.widget.Toast;
 
 import com.example.android.criminalintent.database.CrimeBaseHelper;
 import com.example.android.criminalintent.database.CrimeCursorWrapper;
@@ -42,8 +43,12 @@ public class CrimeLab {
     }
 
     public void deleteCrime(Crime crimeRecord) {
-        mDatabase.execSQL("DELETE FROM CRIMES WHERE UUID = '" + crimeRecord.getId() + "'");
+        int recordCount = mDatabase.delete(CrimeDbSchema.CrimeTable.NAME, "UUID = ?", new String[] { String.valueOf(crimeRecord.getId()) });
+        if (recordCount > 0) {
 
+        } else {
+            Toast.makeText(mContext, "Something went wrong and the record could not be deleted" ,Toast.LENGTH_LONG).show();
+        }
     }
 
     public List<Crime> getCrimes() {
