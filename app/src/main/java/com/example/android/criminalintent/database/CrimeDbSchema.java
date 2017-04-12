@@ -14,6 +14,7 @@ public class CrimeDbSchema {
             public static final String TITLE = "title"; // CrimeTable.Cols.TITLE
             public static final String DATE = "date"; // CrimeTable.Cols.DATE
             public static final String SOLVED = "solved"; // CrimeTable.Cols.SOLVED
+            public static final String SUSPECT = "suspect"; // CrimeTable.Cols.SUSPECT
         }
     }
 }
