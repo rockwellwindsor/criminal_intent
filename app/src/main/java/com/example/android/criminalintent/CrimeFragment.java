@@ -2,7 +2,10 @@ package com.example.android.criminalintent;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
@@ -140,18 +143,47 @@ public class CrimeFragment extends Fragment {
             mSuspectButton.setText(mCrime.getSuspect());
         }
 
+        // Have to verify a contacts app exists or else application will crash when the intent looks for it
+        PackageManager packageManager = getActivity().getPackageManager();
+        if (packageManager.resolveActivity(pickContact, PackageManager.MATCH_DEFAULT_ONLY) == null) {
+            // If not contacts app is detected disable the button
+            mSuspectButton.setEnabled(false);
+        }
+
         return v;
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
         if (resultCode != Activity.RESULT_OK) {
             return;
         }
+
         if (requestCode == REQUEST_DATE) {
             Date date = (Date) data.getSerializableExtra(DatePickerFragment.EXTRA_DATE);
             mCrime.setDate(date);
             updateDate();
+        } else if (requestCode == REQUEST_CONTACT) {
+            Uri contactUri = data.getData();
+            // Specify what values you want the query to return
+            String[] queryFields = new String[] {
+                    ContactsContract.Contacts.DISPLAY_NAME_ALTERNATIVE
+            };
+            // Perform the query
+            Cursor c = getActivity().getContentResolver().query(contactUri, queryFields, null, null, null);
+            try {
+                // Double check that real results were returned
+                if (c.getCount() == 0) {
+                   return;
+                }
+                c.moveToFirst();
+                String suspect = c.getString(0);
+                mCrime.setSuspect(suspect);
+                mSuspectButton.setText(suspect);
+            } finally {
+                c.close();
+            }
         }
     }
 
