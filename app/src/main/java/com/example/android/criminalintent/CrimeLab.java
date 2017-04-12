@@ -45,7 +45,7 @@ public class CrimeLab {
     public void deleteCrime(Crime crimeRecord) {
         int recordCount = mDatabase.delete(CrimeDbSchema.CrimeTable.NAME, "UUID = ?", new String[] { String.valueOf(crimeRecord.getId()) });
         if (recordCount > 0) {
-
+            Toast.makeText(mContext, "Record deleted, now redirect to crimes page" ,Toast.LENGTH_LONG).show();
         } else {
             Toast.makeText(mContext, "Something went wrong and the record could not be deleted" ,Toast.LENGTH_LONG).show();
         }
