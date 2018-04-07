@@ -4,7 +4,7 @@ import java.util.Date;
 import java.util.UUID;
 
 /**
- * Created by rockwellrice on 2/8/17.
+ * Created by Rockwell Rice on 2/8/17.
  */
 
 public class Crime {
@@ -59,5 +59,9 @@ public class Crime {
 
     public void setSuspect(String suspect) {
         mSuspect = suspect;
+    }
+
+    public String getPhotoFilename() {
+        return "IMG_" + getId().toString() + ".jpg";
     }
 }
