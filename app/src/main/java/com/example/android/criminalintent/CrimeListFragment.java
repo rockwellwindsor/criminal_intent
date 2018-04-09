@@ -4,7 +4,7 @@ package com.example.android.criminalintent;
  * Created by Rockwell Rice on 2/13/17.
  */
 
-import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
@@ -34,12 +34,6 @@ public class CrimeListFragment extends Fragment {
     */
     public interface Callbacks {
         void onCrimeSelected(Crime crime);
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        mCallbacks = (Callbacks) activity;
     }
 
     @Override
@@ -206,6 +200,12 @@ public class CrimeListFragment extends Fragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBoolean(SAVED_SUBTITLE_VISIBLE, mSubtitleVisible);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mCallbacks = (Callbacks) context;
     }
 
     @Override
