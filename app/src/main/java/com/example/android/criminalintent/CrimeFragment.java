@@ -101,6 +101,7 @@ public class CrimeFragment extends Fragment {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 mCrime.setTitle(s.toString());
+                updateCrime();
             }
 
             @Override
@@ -137,6 +138,7 @@ public class CrimeFragment extends Fragment {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
                 mCrime.setSolved(isChecked);
+                updateCrime();
             }
         });
 
@@ -153,6 +155,7 @@ public class CrimeFragment extends Fragment {
         });
 
         final Intent pickContact = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
+
         mSuspectButton = (Button) v.findViewById(R.id.crime_suspect);
         mSuspectButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -205,6 +208,7 @@ public class CrimeFragment extends Fragment {
         if (requestCode == REQUEST_DATE) {
             Date date = (Date) data.getSerializableExtra(DatePickerFragment.EXTRA_DATE);
             mCrime.setDate(date);
+            updateCrime();
             updateDate();
         } else if (requestCode == REQUEST_CONTACT) {
             Uri contactUri = data.getData();
@@ -222,11 +226,13 @@ public class CrimeFragment extends Fragment {
                 c.moveToFirst();
                 String suspect = c.getString(0);
                 mCrime.setSuspect(suspect);
+                updateCrime();
                 mSuspectButton.setText(suspect);
             } finally {
                 c.close();
             }
         } else if (requestCode == REQUEST_PHOTO) {
+            updateCrime();
             updatePhotoView();
         }
     }
@@ -234,6 +240,11 @@ public class CrimeFragment extends Fragment {
     public void removeCrimeMethod(Crime crime) {
         CrimeLab.get(getActivity()).deleteCrime(crime);
         //        Toast.makeText(getActivity(), "Delete button pressed : " + crime.getTitle(), Toast.LENGTH_SHORT).show();
+    }
+
+    private void updateCrime() {
+        CrimeLab.get(getActivity()).updateCrime(mCrime);
+        mCallbacks.onCrimeUpdated(mCrime);
     }
 
     private void updateDate() {
